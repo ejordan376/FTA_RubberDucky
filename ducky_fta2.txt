@@ -5,7 +5,8 @@ DELAY 750
 STRING powershell -noprofile Start-Process cmd -Verb runAs 
 ENTER
 DELAY 750  
-ALT y 
+ALT y  
+ENTER
 DELAY 1000
 STRING powershell -version 2 -noexit -noprofile Set-ExecutionPolicy 'Unrestricted' -Scope CurrentUser -Confirm:$false
 ENTER
