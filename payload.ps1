@@ -32,11 +32,12 @@ Begin{
         ipconfig.exe /release
         ipconfig.exe /renew
     }
-    function install-usbEth {
-        switch([string]([enviornment]::OSVersion.Version.major)+"."+[string]([enviornment]::OSVersion.Version.minor)){
-            $DuckyDir = (split-path $SCRIPT:MyInvocation.MyCommand.Path -parent)
+    function install-usbEth {    
+        $DuckyDir=(split-path $SCRIPT:MyInvocation.MyCommand.Path -parent)
+        switch([string]([Environment]::OSVersion.Version.major)+"."+[string]([Environment]::OSVersion.Version.minor)){
             '10.0' {& "$DuckyDir\USB2Eth_Drivers\Win10\setup.exe"}
-            '6.2','6.3' {& "$DuckyDir\USB2Eth_Drivers\Win8\setup.exe"}
+            '6.2' {& "$DuckyDir\USB2Eth_Drivers\Win8\setup.exe"}
+            '6.3' {& "$DuckyDir\USB2Eth_Drivers\Win8\setup.exe"}
             '6.1' {& "$DuckyDir\USB2Eth_Drivers\Win7\setup.exe"}
             Default {& "$DuckyDir\USB2Eth_Drivers\WinXP_Vista\setup.exe"}
         }
@@ -47,31 +48,32 @@ Process{
     $operation = (Read-Host "Select Operation:`nFull(0); Disable Firewall & non-Ethernet(1); Enable all Network adapters(2); Refresh IP(3); Install USB2Eth(4)")
     switch ($operation) {
         0 {
-            Write-verbose "Disabling Firewall"
+            Write-Output "Disabling Firewall"
             disable-Firewall
-            Write-verbose "Disabling Network Adapters"
+            Write-Output "Disabling Network Adapters"
             disable-NetAdapters -netAdapter "1"
-            Write-verbose "Enabling DHCP"
+            Write-Output "Enabling DHCP"
             enable-dhcp
             Start-Sleep 1
-            Write-verbose "Enabling Ethernet Adapters"            
+            Write-Output "Enabling Ethernet Adapters"            
             enable-NetAdapters
         }
         1 {
-            Write-verbose "Disabling Firewall and Non-Ethernet"
+            Write-Output "Disabling Firewall and Non-Ethernet"
             disable-Firewall
             disable-NetAdapters
         }
         2 {
-            Write-Verbose "Enabling all network adapters"
+            Write-Output "Enabling all network adapters"
             enable-NetAdapters -netAdapter '*'
         }
         3 {
-            Write-Verbose "Doing release renew"
+            Write-Output "Doing release renew"
             release-renew
         }
         4 {
-            Write-verbose "Installing Ethernet Driver for " + [string]([enviornment]::OSVersion.Version.major)+"."+[string]([enviornment]::OSVersion.Version.minor)
+            $winVer = "Installing Ethernet Driver for " + [string]([Environment]::OSVersion.Version.major) + "." + [string]([Environment]::OSVersion.Version.minor)
+            Write-Output $winVer
             install-usbEth
         }
         Default {Write-Warning "I didn't do anything!"}
@@ -81,5 +83,3 @@ Process{
 End{
     
 }
-
-
